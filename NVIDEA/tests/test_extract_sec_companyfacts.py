@@ -7,7 +7,7 @@ import unittest
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SCRIPT = ROOT / "scripts" / "extract_sec_companyfacts.py"
+SCRIPT = ROOT / "NVIDEA" / "scripts" / "extract_sec_companyfacts.py"
 
 class SecCompanyfactsExtractorTest(unittest.TestCase):
     def test_quarterly_fact_normalization_and_balance_sheet_tieout(self):
