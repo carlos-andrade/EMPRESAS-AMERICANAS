@@ -290,3 +290,44 @@ A NVIDIA apresenta crescimento extraordinário de receita, margens elevadas e ge
 O dado mais importante não é simplesmente o crescimento de 95,8% da receita semestral. É a capacidade de transformar esse crescimento em caixa recorrente, sem depender excessivamente de ganhos de carteira, alongamento de recebíveis ou expansão de compromissos que possam antecipar demanda futura.
 
 **Status desta fase:** base parcial validada; não certificada como série histórica completa; valuation ainda bloqueado até conclusão das lacunas descritas.
+
+
+---
+
+## Atualização de execução — 17/11/2026
+
+### Coletor SEC XBRL implantado no repositório
+
+Foi adicionado `scripts/extract_sec_companyfacts.py`, que consulta o endpoint SEC Companyfacts da NVIDIA (CIK 1045810) e prepara a camada de staging auditável.
+
+Arquivos de saída previstos em `02_DADOS_FINANCEIROS/`:
+
+- `Source_Index.csv`
+- `Normalized_Financials_Long.csv`
+- `Normalization_Issues.csv`
+- `QA_Flags.csv`
+- `Validation_Checks.csv`
+
+Foi adicionado o workflow manual `.github/workflows/nvidea-sec-financials.yml`. Ele executa o coletor, verifica a existência e integridade mínima dos arquivos e publica os CSVs no próprio GitHub quando há alterações.
+
+### Controles de extração
+
+- Fatos US-GAAP são identificados por tag XBRL e unidade.
+- Valores monetários e quantidades de ações são normalizados para milhões; EPS permanece em USD por ação.
+- Períodos de duração são classificados por datas explícitas de início e fim. Períodos YTD e durações não classificadas não são convertidos em trimestres por inferência.
+- Saldos patrimoniais são tratados como fatos instantâneos.
+- Cada observação mantém accession, formulário, conceito XBRL e datas.
+- GAAP e non-GAAP não são combinados.
+- A validação do balanço usa componentes do mesmo accession, evitando reconciliações artificiais entre filings diferentes.
+
+### Estado real
+
+**Implementado no GitHub, ainda não executado nem certificado.** Não há CSV histórico publicado nesta etapa, pois o workflow não foi disparado e o coletor ainda precisa passar por execução real no GitHub Actions. Não declarar a série histórica como pronta antes desse resultado.
+
+### Limitações deliberadas
+
+O Companyfacts não cobre, de forma suficiente, receita por segmento, guidance, concentração de clientes, backlog, métricas de produto ou comentários de administração. Esses itens serão extraídos separadamente dos 10-Q/10-K, earnings releases, apresentações e transcrições oficiais. A ausência de uma tag US-GAAP não significa valor zero.
+
+### Próximo gate
+
+Executar o workflow manual, inspecionar logs e CSVs, corrigir qualquer falha de mapeamento, comparar amostras com as demonstrações oficiais e só então promover os períodos aprovados para o modelo financeiro.
