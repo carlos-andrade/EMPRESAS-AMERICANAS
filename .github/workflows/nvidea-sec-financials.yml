@@ -1,0 +1,72 @@
+name: NVIDEA — SEC financial data refresh
+
+on:
+  workflow_dispatch:
+    inputs:
+      output_scope:
+        description: "Extraction scope"
+        required: true
+        default: "historical"
+        type: choice
+        options:
+          - historical
+
+permissions:
+  contents: write
+
+concurrency:
+  group: nvidea-sec-financial-refresh
+  cancel-in-progress: false
+
+jobs:
+  extract-and-validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Extract SEC Companyfacts
+        env:
+          NVIDIA_SEC_USER_AGENT: "EMPRESAS-AMERICANAS NVIDEA research contact: github.com/carlos-andrade/EMPRESAS-AMERICANAS"
+        run: |
+          python NVIDEA/scripts/extract_sec_companyfacts.py --output-dir NVIDEA/02_DADOS_FINANCEIROS
+
+      - name: Validate extracted data
+        run: |
+          python - <<'PY'
+          import csv, pathlib, sys
+          base = pathlib.Path("NVIDEA/02_DADOS_FINANCEIROS")
+          required = {
+              "Source_Index.csv", "Normalized_Financials_Long.csv",
+              "Normalization_Issues.csv", "QA_Flags.csv", "Validation_Checks.csv"
+          }
+          missing = sorted(name for name in required if not (base / name).is_file())
+          if missing:
+              raise SystemExit(f"Missing outputs: {missing}")
+          with (base / "Normalized_Financials_Long.csv").open(newline="", encoding="utf-8") as f:
+              rows = list(csv.DictReader(f))
+          if not rows:
+              raise SystemExit("No normalized facts; refusing commit")
+          bad = [i for i, row in enumerate(rows, 2) if not row.get("source_id") or row.get("source_id") == "SRC-UNSPECIFIED" or not row.get("period_end") or not row.get("normalized_value")]
+          if bad:
+              raise SystemExit(f"Rows missing provenance/period/value: {bad[:20]}")
+          print(f"Validated {len(rows)} normalized fact rows")
+          PY
+
+      - name: Commit refreshed dataset
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add NVIDEA/02_DADOS_FINANCEIROS
+          if git diff --cached --quiet; then
+            echo "No financial data changes."
+          else
+            git commit -m "NVIDEA: refresh SEC normalized financial facts"
+            git push
+          fi
