@@ -11,7 +11,6 @@ import csv
 import json
 import os
 import sys
-import time
 import urllib.request
 from collections import defaultdict
 from datetime import datetime, timezone
@@ -89,7 +88,7 @@ def fetch_companyfacts(input_json: Path | None) -> dict:
     if input_json:
         return json.loads(input_json.read_text(encoding="utf-8"))
     user_agent = os.getenv("NVIDIA_SEC_USER_AGENT", "EMPRESAS-AMERICANAS NVIDEA research contact: github.com/carlos-andrade/EMPRESAS-AMERICANAS")
-    req = urllib.request.Request(COMPANYFACTS_URL, headers={"User-Agent": user_agent, "Accept-Encoding": "gzip, deflate", "Host": "data.sec.gov"})
+    req = urllib.request.Request(COMPANYFACTS_URL, headers={"User-Agent": user_agent, "Host": "data.sec.gov"})
     with urllib.request.urlopen(req, timeout=60) as response:
         return json.loads(response.read().decode("utf-8"))
 
@@ -154,11 +153,13 @@ def main() -> int:
         })
     rows, issues = [], []
     seen = set()
+    available_line_items = {mapping[1] for tag, mapping in TAGS.items() if tag in facts}
     for tag, mapping in TAGS.items():
-        if tag not in facts:
-            issues.append({"severity":"medium","issue_type":"concept_not_present","source_id":"","concept":tag,"period_end":"","description":"Expected US-GAAP concept not present in the SEC Companyfacts payload.","recommended_action":"Inspect issuer taxonomy or filing statement; add an explicit mapping only after review."})
-            continue
         statement, item_id, label, allowed_units, kind = mapping
+        if tag not in facts:
+            if item_id not in available_line_items:
+                issues.append({"severity":"medium","issue_type":"concept_not_present","source_id":"","concept":tag,"period_end":"","description":"No mapped US-GAAP alternative for this line item was present in the SEC Companyfacts payload.","recommended_action":"Inspect issuer taxonomy or filing statement; add an explicit mapping only after review."})
+            continue
         for unit, observations in facts[tag].get("units", {}).items():
             if unit not in allowed_units:
                 continue
@@ -182,7 +183,7 @@ def main() -> int:
                 else:
                     period_type, span_note = "quarterly" if obs.get("form") == "10-Q" else "annual", "instant balance"
                     period_label = fiscal_label(end, obs.get("fy"), obs.get("fp"))
-                key = (tag, unit, start, end, acc, period_type)
+                key = (item_id, unit, start, end, acc, period_type)
                 if key in seen:
                     continue
                 seen.add(key)
@@ -228,22 +229,22 @@ def main() -> int:
     latest_bs = defaultdict(dict)
     for r in rows:
         if r["statement"] == "balance_sheet" and r["period_type"] in {"quarterly","annual"}:
-            latest_bs[r["period_end"]][r["line_item_id"]] = float(r["normalized_value"])
+            latest_bs[(r["period_end"], r["source_id"])][r["line_item_id"]] = float(r["normalized_value"])
     flags, checks = [], []
-    for idx, (period, vals) in enumerate(sorted(latest_bs.items()),1):
+    for idx, ((period, source_id), vals) in enumerate(sorted(latest_bs.items()),1):
         if all(k in vals for k in ("total_assets","total_liabilities","total_equity")):
             variance = vals["total_assets"] - vals["total_liabilities"] - vals["total_equity"]
             ok = abs(variance) <= 1.0  # $1mm tolerance
-            checks.append({"check_id":f"CHK-{idx:03d}","area":"balance_sheet","period":period,"test":"Assets = liabilities + equity (USD mm)","expected_value":vals["total_assets"],"observed_value":vals["total_liabilities"]+vals["total_equity"],"variance":variance,"result":"PASS" if ok else "FAIL","source_id":"","notes":"Tolerance: USD 1mm; observations may be drawn from different filings if SEC facts were not co-reported."})
+            checks.append({"check_id":f"CHK-{idx:03d}","area":"balance_sheet","period":period,"test":"Assets = liabilities + equity (USD mm)","expected_value":vals["total_assets"],"observed_value":vals["total_liabilities"]+vals["total_equity"],"variance":variance,"result":"PASS" if ok else "FAIL","source_id":source_id,"notes":"Tolerance: USD 1mm; all components in this test share the same filing source_id."})
             if not ok:
-                flags.append({"flag_id":f"QA-{len(flags)+1:03d}","severity":"high","entity":ENTITY,"period":period,"area":"balance_sheet","issue":f"Balance sheet identity variance {variance:.3f} USD mm.","impact":"Could indicate mapping, period, or filing-selection conflict.","recommended_fix":"Inspect accession-level facts and statement presentation before model loading.","source_id":"","status":"open"})
+                flags.append({"flag_id":f"QA-{len(flags)+1:03d}","severity":"high","entity":ENTITY,"period":period,"area":"balance_sheet","issue":f"Balance sheet identity variance {variance:.3f} USD mm.","impact":"Could indicate mapping, period, or filing-selection conflict.","recommended_fix":"Inspect accession-level facts and statement presentation before model loading.","source_id":source_id,"status":"open"})
         else:
-            checks.append({"check_id":f"CHK-{idx:03d}","area":"balance_sheet","period":period,"test":"Assets = liabilities + equity","expected_value":"","observed_value":"","variance":"","result":"NOT_TESTABLE","source_id":"","notes":"One or more required components are absent in extracted US-GAAP concepts."})
+            checks.append({"check_id":f"CHK-{idx:03d}","area":"balance_sheet","period":period,"test":"Assets = liabilities + equity","expected_value":"","observed_value":"","variance":"","result":"NOT_TESTABLE","source_id":source_id,"notes":"One or more required components are absent in this filing."})
     if not rows:
         raise SystemExit("No eligible facts extracted; no empty financial package will be accepted")
     write_csv(args.output_dir/"QA_Flags.csv", QA_COLUMNS, flags)
     write_csv(args.output_dir/"Validation_Checks.csv", CHECK_COLUMNS, checks)
-    print(json.dumps({"entity":ENTITY,"rows":len(rows),"filings":len(sources)-1,"issues":len(issues),"qa_flags":len(flags),"periods":len(latest_bs),"output_dir":str(args.output_dir)},indent=2))
+    print(json.dumps({"entity":ENTITY,"rows":len(rows),"filings":len(sources)-1,"issues":len(issues),"qa_flags":len(flags),"periods":len({period for period, _ in latest_bs}),"output_dir":str(args.output_dir)},indent=2))
     return 0
 
 if __name__ == "__main__":
