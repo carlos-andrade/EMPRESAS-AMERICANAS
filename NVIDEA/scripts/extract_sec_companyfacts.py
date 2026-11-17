@@ -10,6 +10,7 @@ import argparse
 import csv
 import json
 import os
+import re
 import sys
 import urllib.request
 from collections import defaultdict
@@ -87,8 +88,18 @@ CHECK_COLUMNS = ["check_id","area","period","test","expected_value","observed_va
 def fetch_companyfacts(input_json: Path | None) -> dict:
     if input_json:
         return json.loads(input_json.read_text(encoding="utf-8"))
-    user_agent = os.getenv("NVIDIA_SEC_USER_AGENT", "EMPRESAS-AMERICANAS NVIDEA research contact: github.com/carlos-andrade/EMPRESAS-AMERICANAS")
-    req = urllib.request.Request(COMPANYFACTS_URL, headers={"User-Agent": user_agent, "Host": "data.sec.gov"})
+    contact_email = os.getenv("SEC_CONTACT_EMAIL", "").strip()
+    if not re.fullmatch(r"[^\\s@]+@[^\\s@]+\\.[^\\s@]+", contact_email):
+        raise RuntimeError(
+            "SEC_CONTACT_EMAIL is missing or invalid. Configure the repository Actions variable "
+            "SEC_CONTACT_EMAIL with a monitored contact email; SEC requires a declared company/app "
+            "and contact email in the User-Agent header."
+        )
+    user_agent = f"EMPRESAS-AMERICANAS NVIDEA research {contact_email}"
+    req = urllib.request.Request(
+        COMPANYFACTS_URL,
+        headers={"User-Agent": user_agent, "Accept-Encoding": "identity", "Host": "data.sec.gov"},
+    )
     with urllib.request.urlopen(req, timeout=60) as response:
         return json.loads(response.read().decode("utf-8"))
 
