@@ -31,6 +31,9 @@ jobs:
         with:
           python-version: "3.12"
 
+      - name: Test SEC extractor
+        run: python -m unittest discover -s NVIDEA/tests -v
+
       - name: Extract SEC Companyfacts
         env:
           NVIDIA_SEC_USER_AGENT: "EMPRESAS-AMERICANAS NVIDEA research contact: github.com/carlos-andrade/EMPRESAS-AMERICANAS"
