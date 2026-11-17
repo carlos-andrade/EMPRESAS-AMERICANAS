@@ -331,3 +331,29 @@ O Companyfacts não cobre, de forma suficiente, receita por segmento, guidance, 
 ### Próximo gate
 
 Executar o workflow manual, inspecionar logs e CSVs, corrigir qualquer falha de mapeamento, comparar amostras com as demonstrações oficiais e só então promover os períodos aprovados para o modelo financeiro.
+
+
+## Registro de execução e correção — 17/11/2026
+
+### Primeira execução real do GitHub Actions
+
+Run: https://github.com/carlos-andrade/EMPRESAS-AMERICANAS/actions/runs/44143422606
+
+- Teste automatizado: PASS (1 teste).
+- Extração SEC Companyfacts: FAIL (HTTP 403).
+- Validação de CSVs e commit de dados: não executados.
+
+O log mostra que o runner foi bloqueado no pedido HTTP ao endpoint Companyfacts. O teste local executado no runner não detectou falha na normalização. A hipótese técnica mais provável foi confirmada pela documentação oficial da SEC: o User-Agent precisa identificar a aplicação/organização e incluir um e-mail de contato. O User-Agent inicial continha apenas um URL de GitHub, sem e-mail.
+
+### Correção implantada
+
+- O coletor agora exige `SEC_CONTACT_EMAIL` e valida seu formato.
+- O User-Agent passou a ser `EMPRESAS-AMERICANAS NVIDEA research <email>`.
+- O workflow verifica a variável antes da chamada à SEC e interrompe com orientação clara se estiver ausente.
+- Documentação atualizada com o caminho para configurar a variável em Settings → Secrets and variables → Actions → Variables.
+
+Fonte primária da regra: SEC Webmaster FAQ — https://www.sec.gov/about/webmaster-frequently-asked-questions
+
+### Estado
+
+**Correção publicada; reexecução pendente da configuração de um e-mail real e monitorado pelo responsável.** Não houve ainda confirmação de HTTP 200 nem publicação dos dados históricos.
