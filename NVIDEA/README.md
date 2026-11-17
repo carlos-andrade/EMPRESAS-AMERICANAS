@@ -21,10 +21,10 @@ Pasta dedicada à pesquisa, análise fundamentalista, acompanhamento estratégic
 ## Estado do projeto — 17/11/2026
 
 - FASE 1 — Pesquisa fundamental: script mestre V1.0 criado e leitura no GitHub confirmada.
-- FASE 2 — Inteligência financeira: documento inicial até Q2 FY2027; coletor SEC XBRL e workflow manual de atualização adicionados; execução e certificação da série histórica ainda pendentes.
+- FASE 2 — Inteligência financeira: coletor SEC XBRL e workflow manual adicionados; primeira execução passou no teste automatizado, mas recebeu HTTP 403 da SEC. User-Agent corrigido para exigir e-mail de contato; reexecução depende da variável `SEC_CONTACT_EMAIL` no GitHub Actions.
 - Q3 FY2027: resultados programados para 17/11/2026 às 13h20 PT; incorporar somente após publicação oficial.
 - Governança: transição de CEO documentada em comunicado oficial e Form 8-K; manter investigação independente e fatos subsequentes em acompanhamento separado.
-- Valuation: bloqueado como conclusão de investimento até executar e validar o coletor, fechar série histórica, ações diluídas, caixa/dívida, guidance e dados de mercado sincronizados.
+- Valuation: bloqueado como conclusão de investimento até a coleta SEC retornar HTTP 200, série histórica ser reconciliada e ações diluídas, caixa/dívida, guidance e dados de mercado serem sincronizados.
 
 ## Roadmap
 
