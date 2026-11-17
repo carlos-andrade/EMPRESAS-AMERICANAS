@@ -7,7 +7,7 @@ Pasta dedicada à pesquisa, análise fundamentalista, acompanhamento estratégic
 ## Documentos principais
 
 - [MASTER_RESEARCH_SCRIPT.md](./MASTER_RESEARCH_SCRIPT.md) — protocolo mestre de pesquisa e respostas sobre negócio, tecnologia, concorrência, finanças, valuation, governança, regulação, mercado e riscos.
-- [FASE_2_INTELIGENCIA_FINANCEIRA.md](./FASE_2_INTELIGENCIA_FINANCEIRA.md) — base financeira parcial, métricas reconciliadas, fórmulas, alertas, arquitetura de dados e critérios de QA.
+- [FASE_2_INTELIGENCIA_FINANCEIRA.md](./FASE_2_INTELIGENCIA_FINANCEIRA.md) — base financeira parcial, métricas reconciliadas, fórmulas, alertas, arquitetura de dados e critérios de QA.\n- [02_DADOS_FINANCEIROS/README.md](./02_DADOS_FINANCEIROS/README.md) — procedimento de extração XBRL da SEC, outputs, limitações e execução no GitHub Actions.\n- [scripts/extract_sec_companyfacts.py](./scripts/extract_sec_companyfacts.py) — coletor de fatos financeiros reportados via SEC Companyfacts.
 
 ## Padrão de pesquisa
 
@@ -21,10 +21,10 @@ Pasta dedicada à pesquisa, análise fundamentalista, acompanhamento estratégic
 ## Estado do projeto — 17/11/2026
 
 - FASE 1 — Pesquisa fundamental: script mestre V1.0 criado e leitura no GitHub confirmada.
-- FASE 2 — Inteligência financeira: documento inicial criado com dados oficiais até Q2 FY2027; base parcial, não certificada como série histórica completa.
+- FASE 2 — Inteligência financeira: documento inicial até Q2 FY2027; coletor SEC XBRL e workflow manual de atualização adicionados; execução e certificação da série histórica ainda pendentes.
 - Q3 FY2027: resultados programados para 17/11/2026 às 13h20 PT; incorporar somente após publicação oficial.
 - Governança: transição de CEO documentada em comunicado oficial e Form 8-K; manter investigação independente e fatos subsequentes em acompanhamento separado.
-- Valuation: bloqueado como conclusão de investimento até fechar série histórica, ações diluídas, caixa/dívida, guidance e dados de mercado sincronizados.
+- Valuation: bloqueado como conclusão de investimento até executar e validar o coletor, fechar série histórica, ações diluídas, caixa/dívida, guidance e dados de mercado sincronizados.
 
 ## Roadmap
 
