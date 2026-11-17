@@ -4,9 +4,10 @@
 
 Pasta dedicada à pesquisa, análise fundamentalista, acompanhamento estratégico e avaliação de investimento da NVIDIA Corporation (NASDAQ: NVDA).
 
-## Documento principal
+## Documentos principais
 
-- [MASTER_RESEARCH_SCRIPT.md](./MASTER_RESEARCH_SCRIPT.md) — protocolo mestre reutilizável para responder questões sobre negócio, tecnologia, concorrência, cadeia de suprimentos, finanças, valuation, governança, regulação, mercado de capitais, riscos e catalisadores.
+- [MASTER_RESEARCH_SCRIPT.md](./MASTER_RESEARCH_SCRIPT.md) — protocolo mestre de pesquisa e respostas sobre negócio, tecnologia, concorrência, finanças, valuation, governança, regulação, mercado e riscos.
+- [FASE_2_INTELIGENCIA_FINANCEIRA.md](./FASE_2_INTELIGENCIA_FINANCEIRA.md) — base financeira parcial, métricas reconciliadas, fórmulas, alertas, arquitetura de dados e critérios de QA.
 
 ## Padrão de pesquisa
 
@@ -17,11 +18,22 @@ Pasta dedicada à pesquisa, análise fundamentalista, acompanhamento estratégic
 - Não inventar dados, não ocultar lacunas e não prometer retornos.
 - Atualizar o snapshot após cada divulgação de resultados ou evento material.
 
-## Estado inicial — 17/11/2026
+## Estado do projeto — 17/11/2026
 
-- FY2026 e Q2 FY2027 incorporados ao script com referências primárias.
-- Transição de CEO em novembro de 2026 documentada a partir do comunicado da NVIDIA e Form 8-K.
-- Resultados de Q3 FY2027 aguardavam divulgação oficial na data de corte desta versão; não antecipar números.
+- FASE 1 — Pesquisa fundamental: script mestre V1.0 criado e leitura no GitHub confirmada.
+- FASE 2 — Inteligência financeira: documento inicial criado com dados oficiais até Q2 FY2027; base parcial, não certificada como série histórica completa.
+- Q3 FY2027: resultados programados para 17/11/2026 às 13h20 PT; incorporar somente após publicação oficial.
+- Governança: transição de CEO documentada em comunicado oficial e Form 8-K; manter investigação independente e fatos subsequentes em acompanhamento separado.
+- Valuation: bloqueado como conclusão de investimento até fechar série histórica, ações diluídas, caixa/dívida, guidance e dados de mercado sincronizados.
+
+## Roadmap
+
+1. FASE 1 — Pesquisa fundamental: concluída na versão inicial.
+2. FASE 2 — Inteligência financeira: em andamento.
+3. FASE 3 — Valuation institucional: depende da certificação da base financeira.
+4. FASE 4 — Inteligência competitiva.
+5. FASE 5 — Monitoramento de resultados, governança e catalisadores.
+6. FASE 6 — Dashboard de investimentos.
 
 ## Governança
 
@@ -29,3 +41,4 @@ Pasta dedicada à pesquisa, análise fundamentalista, acompanhamento estratégic
 - Preservar histórico e versionamento.
 - Toda atualização deve incluir fonte, data e justificativa.
 - Revisar inconsistências antes de publicar conclusões.
+- Distinguir dados parciais de dados certificados.
