@@ -89,7 +89,7 @@ def fetch_companyfacts(input_json: Path | None) -> dict:
     if input_json:
         return json.loads(input_json.read_text(encoding="utf-8"))
     contact_email = os.getenv("SEC_CONTACT_EMAIL", "").strip()
-    if not re.fullmatch(r"[^\\s@]+@[^\\s@]+\\.[^\\s@]+", contact_email):
+    if not re.fullmatch(r"[^\s@]+@[^\s@]+\.[^\s@]+", contact_email):
         raise RuntimeError(
             "SEC_CONTACT_EMAIL is missing or invalid. Configure the repository Actions variable "
             "SEC_CONTACT_EMAIL with a monitored contact email; SEC requires a declared company/app "
