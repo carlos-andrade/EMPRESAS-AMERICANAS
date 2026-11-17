@@ -7,7 +7,7 @@ Pasta dedicada à pesquisa, análise fundamentalista, acompanhamento estratégic
 ## Documentos principais
 
 - [MASTER_RESEARCH_SCRIPT.md](./MASTER_RESEARCH_SCRIPT.md) — protocolo mestre de pesquisa e respostas sobre negócio, tecnologia, concorrência, finanças, valuation, governança, regulação, mercado e riscos.
-- [FASE_2_INTELIGENCIA_FINANCEIRA.md](./FASE_2_INTELIGENCIA_FINANCEIRA.md) — base financeira parcial, métricas reconciliadas, fórmulas, alertas, arquitetura de dados e critérios de QA.\n- [02_DADOS_FINANCEIROS/README.md](./02_DADOS_FINANCEIROS/README.md) — procedimento de extração XBRL da SEC, outputs, limitações e execução no GitHub Actions.\n- [scripts/extract_sec_companyfacts.py](./scripts/extract_sec_companyfacts.py) — coletor de fatos financeiros reportados via SEC Companyfacts.
+- [FASE_2_INTELIGENCIA_FINANCEIRA.md](./FASE_2_INTELIGENCIA_FINANCEIRA.md) — base financeira parcial, métricas reconciliadas, fórmulas, alertas, arquitetura de dados e critérios de QA.\n- [02_DADOS_FINANCEIROS/README.md](./02_DADOS_FINANCEIROS/README.md) — procedimento de extração XBRL da SEC, outputs, limitações e execução no GitHub Actions.\n- [scripts/extract_sec_companyfacts.py](./scripts/extract_sec_companyfacts.py) — coletor de fatos financeiros reportados via SEC Companyfacts.\n- [tests/test_extract_sec_companyfacts.py](./tests/test_extract_sec_companyfacts.py) — teste de regressão para normalização e reconciliação.
 
 ## Padrão de pesquisa
 
