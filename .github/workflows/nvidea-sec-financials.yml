@@ -34,9 +34,18 @@ jobs:
       - name: Test SEC extractor
         run: python -m unittest discover -s NVIDEA/tests -v
 
+      - name: Check SEC contact configuration
+        env:
+          SEC_CONTACT_EMAIL: ${{ vars.SEC_CONTACT_EMAIL }}
+        run: |
+          if [ -z "$SEC_CONTACT_EMAIL" ]; then
+            echo "::error::Configure repository Actions variable SEC_CONTACT_EMAIL with a monitored contact email. SEC requires a contact email in the User-Agent."
+            exit 1
+          fi
+
       - name: Extract SEC Companyfacts
         env:
-          NVIDIA_SEC_USER_AGENT: "EMPRESAS-AMERICANAS NVIDEA research contact: github.com/carlos-andrade/EMPRESAS-AMERICANAS"
+          SEC_CONTACT_EMAIL: ${{ vars.SEC_CONTACT_EMAIL }}
         run: |
           python NVIDEA/scripts/extract_sec_companyfacts.py --output-dir NVIDEA/02_DADOS_FINANCEIROS
 
