@@ -4,6 +4,19 @@
 
 Extrair fatos financeiros reportados pela NVIDIA a partir do endpoint XBRL Companyfacts da SEC, com rastreabilidade por conceito, período, unidade, formulário e accession number.
 
+## Configuração obrigatória da SEC
+
+A SEC exige que o cabeçalho HTTP `User-Agent` identifique a aplicação/organização e contenha um e-mail de contato monitorado. A primeira execução no GitHub Actions passou no teste automatizado, mas a consulta ao Companyfacts retornou HTTP 403 porque o User-Agent anterior não continha um e-mail de contato.
+
+Antes de executar novamente, configure no repositório uma variável em **Settings → Secrets and variables → Actions → Variables → New repository variable**:
+
+- Nome: `SEC_CONTACT_EMAIL`
+- Valor: endereço de e-mail monitorado pelo responsável pelo projeto.
+
+Não use endereço fictício ou `noreply`. O coletor agora interrompe a execução com mensagem explícita se a variável estiver ausente ou inválida e monta o User-Agent como `EMPRESAS-AMERICANAS NVIDEA research <email>`. A variável não é uma credencial nem um segredo, mas deve ser um contato real para cumprir a política de acesso da SEC.
+
+Fonte oficial: https://www.sec.gov/about/webmaster-frequently-asked-questions — seção sobre declaração de User-Agent e erros Access Denied.
+
 ## Execução
 
 O fluxo foi desenhado para rodar no GitHub Actions, sem servidor próprio:
